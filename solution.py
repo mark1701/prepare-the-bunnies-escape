@@ -69,10 +69,16 @@ def BFS(matrix):
 
     weights = create_weights_matrix(matrix)
 
-    visited = [[0 for j in range(cols)] for i in range(rows)]
+    # keeps track of the cells that have been visited by the BFS procedure
+    visited_matrix = [[0 for j in range(cols)] for i in range(rows)]
+
+    # populate a new matrix with the paths from the top left corner to the bottom right one
     paths = [[MAX_INT for j in range(cols)] for i in range(rows)]
+
+    # top left corner is always 1, this is also required for the procedure to start properly
     paths[0][0] = 1
 
+    # queue of nodes to visit next
     queue = [(0, 0)]
 
     while len(queue) > 0:
@@ -80,21 +86,22 @@ def BFS(matrix):
         nodeX = node[0]
         nodeY = node[1]
 
-        visited[nodeX][nodeY] = 1
+        visited_matrix[nodeX][nodeY] = 1
 
         adjacents = find_adjacents_of_a_cell(nodeX, nodeY, cols, rows)
         for adj in adjacents:
             adjX = adj[0]
             adjY = adj[1]
 
-            newValue = paths[nodeX][nodeY] + weights[adjX][adjY]
+            new_path_length = paths[nodeX][nodeY] + weights[adjX][adjY]
 
-            if visited[adjX][adjY] != 1:
+            if visited_matrix[adjX][adjY] != 1:
+                # avoid padding a node to the queue if already present - use a set for performance reasons
                 queueSet = set(queue)
                 if adj not in queueSet:
                     queue.append(adj)
-            if newValue < paths[adjX][adjY]:
-                paths[adjX][adjY] = newValue
+            if new_path_length < paths[adjX][adjY]:
+                paths[adjX][adjY] = new_path_length
                 queue.append(adj)
 
     return paths
