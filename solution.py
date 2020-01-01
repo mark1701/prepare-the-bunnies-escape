@@ -3,20 +3,29 @@ import time
 
 MAX_INT = 2**31-1
 
-def CreateWeightsMatrix(matrix):
-    rows = len(matrix)
-    cols = len(matrix[0])
+def create_weights_matrix(matrix):
+    # The original matrix contains 0 for an empty cell and 1 for a walled one.
+    # We change them to positive numbers 1 and 1000 respectively.
+    # This allows to calculate shortest paths based on the sum of the weights
+    # preferring the 1 options always (since the mazes used by the google foo bar challenge are max 20 in size and the sum of empty cells
+    # will never exceed 1000).
 
-    weights = [[0 for j in range(cols)] for i in range(rows)]
+    EMPTY_CELL_WEIGHT = 1
+    WALLED_CELL_WEIGHT = 1000
 
-    for i in range(0, rows):
-        for j in range(0, cols):
+    number_rows = len(matrix)
+    number_columns = len(matrix[0])
+
+    weights_matrix = [[0 for j in range(number_columns)] for i in range(number_rows)]
+
+    for i in range(0, number_rows):
+        for j in range(0, number_columns):
             if matrix[i][j] == 0:
-                weights[i][j] = 1
+                weights_matrix[i][j] = EMPTY_CELL_WEIGHT
             else:
-                weights[i][j] = 1000
+                weights_matrix[i][j] = WALLED_CELL_WEIGHT
 
-    return weights
+    return weights_matrix
 
 
 def FindCellAdjacents(x, y, w, h):
@@ -53,7 +62,7 @@ def BFS(matrix):
     rows = len(matrix)
     cols = len(matrix[0])
 
-    weights = CreateWeightsMatrix(matrix)
+    weights = create_weights_matrix(matrix)
 
     visited = [[0 for j in range(cols)] for i in range(rows)]
     paths = [[MAX_INT for j in range(cols)] for i in range(rows)]
