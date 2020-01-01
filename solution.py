@@ -109,7 +109,7 @@ def BFS(matrix):
 
 def find_removable_walls(paths_matrix):
     # Produces a list of walls that, if removed, could produce a shorter path
-    
+
     number_cols = len(paths_matrix[0])
     number_rows = len(paths_matrix)
 
@@ -139,34 +139,43 @@ def find_removable_walls(paths_matrix):
 
 def solution(maze):
 
-    paths = BFS(maze)
+    paths_matrix = BFS(maze)
 
-    cols = len(paths[0])
-    rows = len(paths)
+    number_cols = len(paths_matrix[0])
+    number_rows = len(paths_matrix)
 
-    shortestPath = paths[rows - 1][cols - 1]
-    bestAbsolutePath = rows
-    if cols > rows:
-        bestAbsolutePath = cols
+    # the lenght of the path is stored in the bottom-right corner
+    shortestPath = paths_matrix[number_rows - 1][number_cols - 1]
+
+    # the shortest possible path won't be shorter than the longest dimension (number or rows or columns)
+    # if we find something as short as that there's no need to search further
+    bestAbsolutePath = number_rows
+    if number_cols > number_rows:
+        bestAbsolutePath = number_cols
 
     if shortestPath == bestAbsolutePath:
         return shortestPath
 
-    removableWalls = find_removable_walls(paths)
+    # can we remove some walls to search for a shorter path?
+    removableWalls = find_removable_walls(paths_matrix)
 
     for wall in removableWalls:
         wallX = wall[0]
         wallY = wall[1]
 
-        maze[wallX][wallY] = 0
-        paths = BFS(maze)
-        newPath = paths[rows - 1][cols - 1]
-        if newPath < shortestPath:
-            shortestPath = newPath
+        maze[wallX][wallY] = 0 # remove that wall in the original maze
 
-        maze[wallX][wallY] = 1
-        if shortestPath == bestAbsolutePath:
+        paths_matrix = BFS(maze)
+
+        new_shortest_path_length = paths_matrix[number_rows - 1][number_cols - 1]
+
+        if new_shortest_path_length < shortestPath:
+            shortestPath = new_shortest_path_length
+
+        if shortestPath == bestAbsolutePath: # again, in this case we have finished, can't do better anyway
             return shortestPath
+
+        maze[wallX][wallY] = 1 # restore the wall before moving to the next one
 
     return shortestPath
 
