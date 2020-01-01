@@ -28,33 +28,38 @@ def create_weights_matrix(matrix):
     return weights_matrix
 
 
-def FindCellAdjacents(x, y, w, h):
+def find_adjacents_of_a_cell(x, y, number_columns, number_rows):
+    # Simply returns an array of coordinates of cells
+    # that are adjacent to a given one passed as parameter (x,y).
+    # Also requires the size of the containg matrix to take bonduaries into consideration.
 
-    if x >= h or y >= w:
+    
+    if x >= number_rows or y >= number_columns:
         return []
 
-    w = w - 1  # transform into indexes
-    h = h - 1
+    # transform into indexes
+    number_columns = number_columns - 1
+    number_rows = number_rows - 1
 
     if x == 0 and y == 0:
         return [(x, y + 1), (x + 1, y)]
-    if x == 0 and 0 < y < w:
+    if x == 0 and 0 < y < number_columns:
         return [(x, y + 1), (x + 1, y), (x, y - 1)]
-    if x == 0 and y == w:
+    if x == 0 and y == number_columns:
         return [(x + 1, y), (x, y - 1)]
 
-    if 0 < x < h and y == 0:
+    if 0 < x < number_rows and y == 0:
         return [(x - 1, y), (x, y + 1), (x + 1, y)]
-    if 0 < x < h and 0 < y < w:
+    if 0 < x < number_rows and 0 < y < number_columns:
         return [(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)]
-    if 0 < x < h and y == w:
+    if 0 < x < number_rows and y == number_columns:
         return [(x - 1, y), (x + 1, y), (x, y - 1)]
 
-    if x == h and y == 0:
+    if x == number_rows and y == 0:
         return [(x - 1, y), (x, y + 1)]
-    if x == h and 0 < y < w:
+    if x == number_rows and 0 < y < number_columns:
         return [(x - 1, y), (x, y + 1), (x, y - 1)]
-    if x == h and y == w:
+    if x == number_rows and y == number_columns:
         return [(x - 1, y), (x, y - 1)]
 
 
@@ -77,7 +82,7 @@ def BFS(matrix):
 
         visited[nodeX][nodeY] = 1
 
-        adjacents = FindCellAdjacents(nodeX, nodeY, cols, rows)
+        adjacents = find_adjacents_of_a_cell(nodeX, nodeY, cols, rows)
         for adj in adjacents:
             adjX = adj[0]
             adjY = adj[1]
@@ -104,7 +109,7 @@ def FindRemovableWalls(paths):
     for i in range(0, h):
         for j in range(0, w):
             if 1000 < paths[i][j] < 2000:
-                adjacents = FindCellAdjacents(i, j, w, h)
+                adjacents = find_adjacents_of_a_cell(i, j, w, h)
                 counter = 0
 
                 for adj in adjacents:
