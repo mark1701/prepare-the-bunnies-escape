@@ -107,23 +107,29 @@ def BFS(matrix):
     return paths
 
 
-def FindRemovableWalls(paths):
-    w = len(paths[0])
-    h = len(paths)
+def find_removable_walls(paths_matrix):
+    # Produces a list of walls that, if removed, could produce a shorter path
+    
+    number_cols = len(paths_matrix[0])
+    number_rows = len(paths_matrix)
 
     removableWalls = []
 
-    for i in range(0, h):
-        for j in range(0, w):
-            if 1000 < paths[i][j] < 2000:
-                adjacents = find_adjacents_of_a_cell(i, j, w, h)
+    for i in range(0, number_rows):
+        for j in range(0, number_cols):
+            # walls that can be removed in a useful way to produce a shorter paths
+            # have 2 charateristics: path length between 1000 and 2000 and are adjacent to a cell which is 
+            # part of an existing path (checked below when we do the paths_matrix[adjX][adjY] < 1000 comparison)
+
+            if 1000 < paths_matrix[i][j] < 2000:  
+                adjacents = find_adjacents_of_a_cell(i, j, number_cols, number_rows)
                 counter = 0
 
                 for adj in adjacents:
                     adjX = adj[0]
                     adjY = adj[1]
 
-                    if paths[adjX][adjY] < 1000:
+                    if paths_matrix[adjX][adjY] < 1000:
                         counter += 1
                         if counter > 0:
                             removableWalls.append((i, j))
@@ -146,7 +152,7 @@ def solution(maze):
     if shortestPath == bestAbsolutePath:
         return shortestPath
 
-    removableWalls = FindRemovableWalls(paths)
+    removableWalls = find_removable_walls(paths)
 
     for wall in removableWalls:
         wallX = wall[0]
